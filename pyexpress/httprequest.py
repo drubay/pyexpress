@@ -1,4 +1,4 @@
-class _HttpRequest:
+class HttpRequest:
     def __init__(self, path, method, headers, path_params, query_params, body):
         self.path = path
         self.method = method

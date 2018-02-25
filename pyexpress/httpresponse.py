@@ -1,7 +1,7 @@
-from httpresponseclosederror import HttpResponseClosedError
+from pyexpress.httpresponseclosederror import HttpResponseClosedError
 
 
-class _HttpResponse:
+class HttpResponse:
     is_closed = True
     status_code = 500
 

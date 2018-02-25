@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyexpress',
-    version='0.1.0a1',
+    version='0.1.0a2',
     description='A HTTP server framework',
     author='sdrubay',
     license='MIT',

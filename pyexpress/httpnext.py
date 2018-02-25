@@ -1,4 +1,4 @@
-class _HttpNext:
+class HttpNext:
     req = []
     res = []
     callbacks = []

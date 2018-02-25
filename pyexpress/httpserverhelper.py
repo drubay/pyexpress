@@ -5,10 +5,10 @@ from http.server import HTTPServer
 from socketserver import ThreadingMixIn
 from threading import Thread
 
-from httpconstants import HttpConstants
-from httpnext import _HttpNext
-from httprequest import _HttpRequest
-from httpresponse import _HttpResponse
+from pyexpress.httpconstants import HttpConstants
+from pyexpress.httpnext import HttpNext
+from pyexpress.httprequest import HttpRequest
+from pyexpress.httpresponse import HttpResponse
 
 
 class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
@@ -98,7 +98,7 @@ class HttpServerHelper(BaseHTTPRequestHandler):
                     if len(q) == 2:
                         query_params[q[0]] = q[1]
 
-            http_next = _HttpNext()
+            http_next = HttpNext()
             for url in self._uses.keys():
                 regex_result = re.match(url, path)
                 if regex_result is not None:
@@ -106,8 +106,8 @@ class HttpServerHelper(BaseHTTPRequestHandler):
                     for res in regex_result.groupdict().keys():
                         path_params[res] = regex_result.group(res)
 
-                    http_request = _HttpRequest(path, method, self.headers, path_params, query_params, None)
-                    http_response = _HttpResponse(self)
+                    http_request = HttpRequest(path, method, self.headers, path_params, query_params, None)
+                    http_response = HttpResponse(self)
                     http_next.append(http_request, http_response, self._uses[url])
 
             for url in listeners.keys():
@@ -117,16 +117,16 @@ class HttpServerHelper(BaseHTTPRequestHandler):
                     for res in regex_result.groupdict().keys():
                         path_params[res] = regex_result.group(res)
 
-                    http_request = _HttpRequest(path, method, self.headers, path_params, query_params, None)
-                    http_response = _HttpResponse(self)
+                    http_request = HttpRequest(path, method, self.headers, path_params, query_params, None)
+                    http_response = HttpResponse(self)
                     http_next.append(http_request, http_response, listeners[url])
 
             if http_next.has_next():
                 http_next.next()
             else:
-                _HttpResponse(self).status(404).send()
+                HttpResponse(self).status(404).send()
         except Exception as e:
-            _HttpResponse(self).status(500).send(str(e).encode("UTF-8"))
+            HttpResponse(self).status(500).send(str(e).encode("UTF-8"))
 
     def _complex_request(self, method):
         try:
@@ -176,7 +176,7 @@ class HttpServerHelper(BaseHTTPRequestHandler):
                             + " or " + HttpConstants.CONTENT_TYPE_WWW_FORM
                         )
 
-            http_next = _HttpNext()
+            http_next = HttpNext()
             for url in self._uses.keys():
                 regex_result = re.match(url, path)
                 if regex_result is not None:
@@ -184,8 +184,8 @@ class HttpServerHelper(BaseHTTPRequestHandler):
                     for res in regex_result.groupdict().keys():
                         path_params[res] = regex_result.group(res)
 
-                    http_request = _HttpRequest(path, method, self.headers, path_params, query_params, body_params)
-                    http_response = _HttpResponse(self)
+                    http_request = HttpRequest(path, method, self.headers, path_params, query_params, body_params)
+                    http_response = HttpResponse(self)
                     http_next.append(http_request, http_response, self._uses[url])
 
             for url in listeners.keys():
@@ -195,13 +195,13 @@ class HttpServerHelper(BaseHTTPRequestHandler):
                     for res in regex_result.groupdict().keys():
                         path_params[res] = regex_result.group(res)
 
-                    http_request = _HttpRequest(path, method, self.headers, path_params, query_params, body_params)
-                    http_response = _HttpResponse(self)
+                    http_request = HttpRequest(path, method, self.headers, path_params, query_params, body_params)
+                    http_response = HttpResponse(self)
                     http_next.append(http_request, http_response, listeners[url])
 
             if http_next.has_next():
                 http_next.next()
             else:
-                _HttpResponse(self).status(404).send()
+                HttpResponse(self).status(404).send()
         except Exception as e:
-            _HttpResponse(self).status(500).send(str(e).encode("UTF-8"))
+            HttpResponse(self).status(500).send(str(e).encode("UTF-8"))
