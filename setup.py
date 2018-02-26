@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyexpress',
-    version='0.1.0a4',
+    version='0.1.0a5',
     description='A HTTP server framework',
     long_description='Inpired by ExpressJS, pyexpress provides a simple way to deploy a HTTP server',
     author='sdrubay',

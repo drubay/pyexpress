@@ -1,4 +1,4 @@
-ExpressPy
+PyExpress
 =======================
 
 This project is inspired by ExpressJS.
@@ -9,18 +9,18 @@ The source for this project is available on GitHub: `<https://github.com/drubay/
 
 
 Installation
-=====
+=======================
 
 .. code:: bash
 
     pip install pyexpress
 
 Examples
-=========
+=======================
 
 .. code:: python
 
-    from expresspy import HttpServerHelper
+    from pyexpress import HttpServerHelper
 
 
     PORT = 8080

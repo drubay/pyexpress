@@ -226,15 +226,19 @@ class HttpServerHelper(BaseHTTPRequestHandler):
 
     @staticmethod
     def read_file(directory, path):
-        file = './' + directory + path
+        base_dir = './' + directory
+        file = base_dir + path
         if os.path.isdir(file):
             file = file + '/index.html'
+
         while '//' in file:
             file = file.replace('//', '/')
-        if os.path.realpath('.') in os.path.realpath(file):
-            if not os.path.exists(file):
-                raise FileNotFoundError()
-            with open(file, 'r') as inputstream:
-                return inputstream.read().encode("UTF-8")
-        else:
+
+        if os.path.realpath(base_dir) not in os.path.realpath(file):
             raise FileIsNotInCurrentDirectoryError()
+
+        if not os.path.exists(file):
+            raise FileNotFoundError()
+
+        with open(file, 'r') as inputstream:
+            return inputstream.read().encode("UTF-8")
