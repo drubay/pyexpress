@@ -39,6 +39,7 @@ Examples
 
     HttpServerHelper.post("/hello", post_hello)
     HttpServerHelper.get("/hello", get_hello)
+    HttpServerHelper.static("dist")
     HttpServerHelper.start(PORT)
 
     try:

@@ -44,6 +44,7 @@ def run():
     HttpServerHelper.get("/hello/:helloId", get_hello)
     HttpServerHelper.put("/hello", put_hello)
     HttpServerHelper.delete("/hello", delete_hello)
+    HttpServerHelper.static()
     HttpServerHelper.start(PORT)
 
 

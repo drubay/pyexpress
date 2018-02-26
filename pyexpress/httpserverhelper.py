@@ -1,10 +1,12 @@
 import json
+import os
 import re
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
 from socketserver import ThreadingMixIn
 from threading import Thread
 
+from pyexpress.fileisnotincurrentdirectoryerror import FileIsNotInCurrentDirectoryError
 from pyexpress.httpconstants import HttpConstants
 from pyexpress.httpnext import HttpNext
 from pyexpress.httprequest import HttpRequest
@@ -21,6 +23,7 @@ class HttpServerHelper(BaseHTTPRequestHandler):
     _deletes = {}
     _posts = {}
     _puts = {}
+    _static = None
     _server_thread = None
 
     @classmethod
@@ -63,6 +66,10 @@ class HttpServerHelper(BaseHTTPRequestHandler):
     @classmethod
     def put(cls, url, callback):
         cls._puts[cls._url_to_regex(url)] = callback
+
+    @classmethod
+    def static(cls, directory=""):
+        cls._static = directory
 
     def do_GET(self):
         self._simple_request(HttpConstants.METHOD_GET)
@@ -123,9 +130,15 @@ class HttpServerHelper(BaseHTTPRequestHandler):
 
             if http_next.has_next():
                 http_next.next()
+            elif self._static is not None:
+                try:
+                    HttpResponse(self).status(200).send(self.read_file(self._static, path))
+                except FileNotFoundError:
+                    HttpResponse(self).status(404).send()
             else:
                 HttpResponse(self).status(404).send()
         except Exception as e:
+            print(e)
             HttpResponse(self).status(500).send(str(e).encode("UTF-8"))
 
     def _complex_request(self, method):
@@ -201,7 +214,27 @@ class HttpServerHelper(BaseHTTPRequestHandler):
 
             if http_next.has_next():
                 http_next.next()
+            elif self._static is not None:
+                try:
+                    HttpResponse(self).status(200).send(self.read_file(self._static, path))
+                except FileNotFoundError:
+                    HttpResponse(self).status(404).send()
             else:
                 HttpResponse(self).status(404).send()
         except Exception as e:
             HttpResponse(self).status(500).send(str(e).encode("UTF-8"))
+
+    @staticmethod
+    def read_file(directory, path):
+        file = './' + directory + path
+        if os.path.isdir(file):
+            file = file + '/index.html'
+        while '//' in file:
+            file = file.replace('//', '/')
+        if os.path.realpath('.') in os.path.realpath(file):
+            if not os.path.exists(file):
+                raise FileNotFoundError()
+            with open(file, 'r') as inputstream:
+                return inputstream.read().encode("UTF-8")
+        else:
+            raise FileIsNotInCurrentDirectoryError()
